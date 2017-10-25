@@ -9,14 +9,18 @@ if (fs.existsSync(testDir)) {
 }
 
 fs.mkdirSync(testDir);
-fs.writeFileSync(testDir + '/package.json', '{}');
+fs.writeFileSync(testDir + '/package.json', JSON.stringify({
+  name: 'test',
+  scripts: { postinstall: 'wavy "~"' },
+  dependencies: { wavy: 'file:..' }
+}));
 fs.writeFileSync(testDir + '/index.js', 'console.log(require("~/foo"))');
 fs.writeFileSync(testDir + '/foo.js', 'module.exports = "foo";');
 
 console.log('wavy');
 exec('node --version', function(err, out) {
   var isgnoreNpmInstallDotDot = Number(out.match(/v(\d+)/)[1]) >= 5;
-  exec('npm install -S ..', { cwd: testDir }, function(err) {
+  exec('npm install', { cwd: testDir }, function(err) {
     handleError(err);
     console.log('√ installs without errors');
     exec('node index', { cwd: testDir }, function(err, stdout) {
@@ -25,14 +29,14 @@ exec('node --version', function(err, out) {
         handleError(new Error('expected output to be "foo" got ' + stdout.trim()));
       }
       console.log('√ works after install');
-      exec('npm install ..', { cwd: testDir }, function(err) {
+      exec('npm install', { cwd: testDir }, function(err) {
         if (!isgnoreNpmInstallDotDot) handleError(err);
         console.log('√ can handle multiple installs');
         deleteFolderRecursive(testDir + '/node_modules');
         fs.mkdirSync(testDir + '/node_modules/');
         fs.writeFileSync(testDir + '/node_modules/~', '123');
-        exec('npm install ..', { cwd: testDir }, function(err) {
-          var regex = /^Error: .*[\/\\]node_modules[\/\\]~ is already being used$/m;
+        exec('npm install', { cwd: testDir }, function(err) {
+          var regex = /Error: .*[\/\\]node_modules[\/\\]~/g;
           if (!regex.test(err.message)) {
             handleError(new Error('did not handle improper existing ~'))
           }
@@ -48,7 +52,7 @@ exec('node --version', function(err, out) {
 
 function handleError(err) {
   if (err) {
-    deleteFolderRecursive(testDir);
+    //deleteFolderRecursive(testDir);
     console.error(err.stack);
     process.exit(1);
   }

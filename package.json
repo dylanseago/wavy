@@ -1,25 +1,24 @@
 {
   "name": "wavy",
-  "version": "1.0.4",
-  "description": "use `~` in require and import calls",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "use symlink to package root in require and import calls",
+  "bin": "./postinstall.js",
   "scripts": {
-    "postinstall": "node postinstall",
     "test": "node test"
   },
   "keywords": [
-    "~",
+    "import",
     "require",
     "symlink"
   ],
-  "author": "Moshe Kolodny",
+  "author": "Dylan Seago",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kolodny/wavy.git"
+    "url": "git+https://github.com/dylanseago/wavy.git"
   },
   "bugs": {
-    "url": "https://github.com/kolodny/wavy/issues"
+    "url": "https://github.com/dylanseago/wavy/issues"
   },
-  "homepage": "https://github.com/kolodny/wavy#readme"
+  "homepage": "https://github.com/dylanseago/wavy#readme"
 }
